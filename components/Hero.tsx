@@ -1,9 +1,7 @@
 'use client';
 
 import styled, { keyframes } from 'styled-components';
-import { useEffect, useRef } from 'react';
-
-const PROFILE_IMG = 'https://www.figma.com/api/mcp/asset/3cffed57-22fc-4a75-bc1e-4b067c306cfd';
+import Profile from "@/assets/Profile.png"
 
 const fadeUp = keyframes`
   from { opacity: 0; transform: translateY(24px); }
@@ -89,8 +87,8 @@ const Subline = styled.p`
 `;
 
 const Avatar = styled.div`
-  width: 200px;
-  height: 200px;
+  width: 250px;
+  height: 250px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
@@ -124,7 +122,7 @@ export default function Hero() {
           </Subline>
         </TextBlock>
         <Avatar>
-          <img src={PROFILE_IMG} alt="Christopher Tate" />
+          <img src={Profile.src} alt="Christopher Tate" />
         </Avatar>
       </Inner>
     </Section>

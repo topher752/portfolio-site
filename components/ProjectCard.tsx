@@ -1,10 +1,9 @@
-'use client';
+"use client";
 
-import styled from 'styled-components';
-import Link from 'next/link';
-
-const LOCK_ICON = 'https://www.figma.com/api/mcp/asset/f7512a09-7e99-498a-9616-2e3fd82a7d8e';
-const ARROW_ICON = 'https://www.figma.com/api/mcp/asset/4a75f4c8-8d06-4baf-9dc1-fb72d49b5406';
+import styled from "styled-components";
+import Link from "next/link";
+import ArrowIcon from "@/assets/ArrowIcon.svg";
+import LockIcon from "@/assets/LockIcon.svg";
 
 export interface ProjectCardProps {
   title: string;
@@ -31,23 +30,35 @@ const Thumbnail = styled.div<{ $accentColor: string; $bg?: string }>`
   overflow: hidden;
   position: relative;
   background-color: ${({ $accentColor }) => $accentColor};
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
-  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
   }
 `;
 
 const ThumbnailImg = styled.img`
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
   object-fit: cover;
   opacity: 0.8;
+  height: auto;
+
+  &.nda {
+    width: 100%;
+  }
+
+  &.logo {
+    width: 85%;
+    margin: auto;
+  }
 `;
 
 const ThumbnailCustom = styled.div`
@@ -62,11 +73,11 @@ const NdaBadge = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid ${({ theme }) => theme.colors.pillBorder};
   border-radius: 9999px;
   padding: 12px 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
 
 const NdaIcon = styled.img`
@@ -85,13 +96,6 @@ const NdaText = styled.span`
 
 const Info = styled.div`
   padding-top: 20px;
-`;
-
-const TitleRow = styled.div`
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 6px;
 `;
 
 const Title = styled.h3`
@@ -129,7 +133,9 @@ const CardLink = styled(Link)`
   letter-spacing: -0.15px;
   transition: opacity 0.2s ease;
 
-  &:hover { opacity: 0.6; }
+  &:hover {
+    opacity: 0.6;
+  }
 
   img {
     width: 15px;
@@ -159,11 +165,21 @@ export default function ProjectCard({
 }: ProjectCardProps) {
   const thumbnailContent = (
     <>
-      {thumbnailSrc && <ThumbnailImg src={thumbnailSrc} alt="" />}
+      {thumbnailSrc && <ThumbnailImg src={thumbnailSrc} alt="" className={isNda ? "nda" : "logo"} />}
       {isNda && (
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(253,251,247,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(35deg, hsla(0, 0%, 100%, 0.85), rgba(146, 146, 146, 0.71))",
+            backdropFilter: "blur(12px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <NdaBadge>
-            <NdaIcon src={LOCK_ICON} alt="" />
+            <NdaIcon src={LockIcon.src} alt="" />
             <NdaText>NDA Protected</NdaText>
           </NdaBadge>
         </div>
@@ -174,9 +190,7 @@ export default function ProjectCard({
 
   return (
     <Card>
-      <Thumbnail $accentColor={accentColor}>
-        {thumbnailContent}
-      </Thumbnail>
+      <Thumbnail $accentColor={accentColor}>{thumbnailContent}</Thumbnail>
       <Info>
         <Title>{title}</Title>
         <Subtitle>{subtitle}</Subtitle>
@@ -186,7 +200,7 @@ export default function ProjectCard({
         ) : linkHref && linkText ? (
           <CardLink href={linkHref}>
             {linkText}
-            <img src={ARROW_ICON} alt="" />
+            <img src={ArrowIcon.src} alt="" />
           </CardLink>
         ) : null}
       </Info>

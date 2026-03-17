@@ -87,7 +87,7 @@ export default function Navbar() {
         <Logo href="/">Christopher Tate.</Logo>
         <NavLinks>
           <NavLink onClick={() => scrollToSection('work')}>Work</NavLink>
-          <NavLinkAnchor href="/resume" target="_blank">Resume</NavLinkAnchor>
+          <NavLinkAnchor href="/Resume.pdf" target="_blank" rel="noopener noreferrer">Resume</NavLinkAnchor>
         </NavLinks>
       </Inner>
     </Nav>

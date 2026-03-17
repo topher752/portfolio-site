@@ -3,10 +3,9 @@
 import styled from 'styled-components';
 import ProjectCard from './ProjectCard';
 import { useScrollReveal } from '@/lib/useScrollReveal';
+import NextRepLogo from "@/assets/NextRepLogo.svg";
+import HoneysucklesLogo from "@/assets/HoneySucklesLogo.svg"
 
-const NDA_PROJECT_BG = 'https://www.figma.com/api/mcp/asset/e85dd50b-9d78-475d-aaa9-1f0b2f8533e2';
-const NEXTREP_BG = 'https://www.figma.com/api/mcp/asset/e85dd50b-9d78-475d-aaa9-1f0b2f8533e2';
-const HONEYSUCKLES_BG = 'https://www.figma.com/api/mcp/asset/e85dd50b-9d78-475d-aaa9-1f0b2f8533e2';
 
 const Section = styled.section`
   padding: 0 24px 96px;
@@ -90,7 +89,6 @@ export default function ProjectsSection() {
               subtitle="Web Application & Mobile App Redesign"
               description="UX Design and frontend development for DocSpera's healthcare portal designed to streamline patient scheduling, messaging, and surgical lifecycle tracking on both web and mobile applications."
               accentColor="#0096fa"
-              thumbnailSrc={NDA_PROJECT_BG}
               isNda
             />
           </RevealCard>
@@ -100,7 +98,6 @@ export default function ProjectsSection() {
               subtitle="Responsive Web Application"
               description="UI/UX design and frontend development for a leading medical device company. Focused on creating an intuitive experience for surgeons navigating a connected orthopedic technology ecosystem."
               accentColor="#d71500"
-              thumbnailSrc={NDA_PROJECT_BG}
               isNda
             />
           </RevealCard>
@@ -110,7 +107,6 @@ export default function ProjectsSection() {
               subtitle="UI/UX Design & Frontend Development"
               description="UI/UX design and frontend development designing and assisting building therapy tracking, patient intake flows, and an admin view in one concise dashboard"
               accentColor="#ff9e1b"
-              thumbnailSrc={NDA_PROJECT_BG}
               isNda
             />
           </RevealCard>
@@ -134,6 +130,7 @@ export default function ProjectsSection() {
               linkText="View Case Study"
               linkHref="/projects/nextrep"
               slug="nextrep"
+              thumbnailSrc={NextRepLogo.src}
             />
           </RevealCard>
           <RevealCard delay={0.1}>
@@ -145,6 +142,7 @@ export default function ProjectsSection() {
               linkText="View Case Study"
               linkHref="/projects/honeysuckles"
               slug="honeysuckles"
+              thumbnailSrc={HoneysucklesLogo.src}
             />
           </RevealCard>
         </Grid>
