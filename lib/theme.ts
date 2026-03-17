@@ -16,7 +16,7 @@ export const theme = {
     navBg: 'rgba(253, 251, 247, 0.8)',
   },
   fonts: {
-    sans: "'Inter', sans-serif",
+    sans: "var(--font-inter), sans-serif",
   },
   fontSizes: {
     xs: '12px',
