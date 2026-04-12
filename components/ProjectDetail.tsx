@@ -57,13 +57,37 @@ const Category = styled.p`
   margin-bottom: 16px;
 `;
 
+const TitleRow = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 20px;
+`;
+
 const Title = styled.h1`
   font-size: clamp(32px, 4vw, 48px);
   font-weight: 600;
   color: ${({ theme }) => theme.colors.textDark};
   letter-spacing: 0.35px;
   line-height: 1.1;
-  margin-bottom: 20px;
+`;
+
+const NdaPill = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.textMuted};
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  background: ${({ theme }) => theme.colors.bgMuted};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: 9999px;
+  padding: 5px 12px;
+  white-space: nowrap;
+  align-self: center;
 `;
 
 const Description = styled.p`
@@ -241,6 +265,86 @@ const OverviewVal = styled.span`
   text-align: right;
 `;
 
+// ─── Tasks section ───────────────────────────────────────────────────────────
+
+const TasksList = styled.ul`
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+`;
+
+const TaskItem = styled.li`
+  font-size: 18px;
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.textMid};
+  line-height: 1.625;
+  letter-spacing: -0.44px;
+  padding: 14px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+
+  &:first-child { border-top: 1px solid ${({ theme }) => theme.colors.border}; }
+
+  &::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: ${({ theme }) => theme.colors.textAccent};
+    flex-shrink: 0;
+    margin-top: 9px;
+  }
+`;
+
+// ─── Stats strip ─────────────────────────────────────────────────────────────
+
+const StatsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+`;
+
+const StatCard = styled.div`
+  background: ${({ theme }) => theme.colors.bgMuted};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: 16px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+const StatValue = styled.span`
+  font-size: 36px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.textDark};
+  letter-spacing: -1px;
+  line-height: 1;
+`;
+
+const StatLabel = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.textMid};
+  letter-spacing: -0.15px;
+  line-height: 1.4;
+`;
+
+const StatContext = styled.span`
+  font-size: 12px;
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.textFaint};
+  letter-spacing: 0.1px;
+`;
+
 // ─── Process sections ────────────────────────────────────────────────────────
 
 const ProcessSection = styled.div`
@@ -354,7 +458,18 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
         {/* Header */}
         <Header>
           <Category>{project.category}</Category>
-          <Title>{project.title}</Title>
+          <TitleRow>
+            <Title>{project.title}</Title>
+            {project.nda && (
+              <NdaPill>
+                <svg width="11" height="12" viewBox="0 0 12 14" fill="none">
+                  <rect x="1" y="6" width="10" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.4"/>
+                  <path d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                </svg>
+                NDA Protected
+              </NdaPill>
+            )}
+          </TitleRow>
           <Description>{project.description}</Description>
           <MetaBar>
             <MetaItem>
@@ -407,6 +522,33 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
               </OverviewCard>
             </AskRow>
           </RevealBlock>
+
+          {/* Tasks */}
+          {project.tasks && project.tasks.length > 0 && (
+            <RevealBlock>
+              <SectionHeading>Tasks</SectionHeading>
+              <TasksList>
+                {project.tasks.map((task, i) => (
+                  <TaskItem key={i}>{task}</TaskItem>
+                ))}
+              </TasksList>
+            </RevealBlock>
+          )}
+
+          {/* Stats strip */}
+          {project.stats && project.stats.length > 0 && (
+            <RevealBlock>
+              <StatsGrid>
+                {project.stats.map((stat, i) => (
+                  <StatCard key={i}>
+                    <StatValue>{stat.value}</StatValue>
+                    <StatLabel>{stat.label}</StatLabel>
+                    {stat.context && <StatContext>{stat.context}</StatContext>}
+                  </StatCard>
+                ))}
+              </StatsGrid>
+            </RevealBlock>
+          )}
 
           {/* Named sections */}
           {project.sections.map((section, i) => (

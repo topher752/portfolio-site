@@ -195,13 +195,13 @@ export default function ProjectCard({
         <Title>{title}</Title>
         <Subtitle>{subtitle}</Subtitle>
         <Description>{description}</Description>
-        {isNda ? (
-          <UnavailableText>Unavailable to View</UnavailableText>
-        ) : linkHref && linkText ? (
+        {linkHref && linkText ? (
           <CardLink href={linkHref}>
             {linkText}
             <img src={ArrowIcon.src} alt="" />
           </CardLink>
+        ) : isNda ? (
+          <UnavailableText>Unavailable to View</UnavailableText>
         ) : null}
       </Info>
     </Card>

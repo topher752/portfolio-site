@@ -1,11 +1,10 @@
-'use client';
+"use client";
 
-import styled from 'styled-components';
-import ProjectCard from './ProjectCard';
-import { useScrollReveal } from '@/lib/useScrollReveal';
+import styled from "styled-components";
+import ProjectCard from "./ProjectCard";
+import { useScrollReveal } from "@/lib/useScrollReveal";
 import NextRepLogo from "@/assets/NextRepLogo.svg";
-import HoneysucklesLogo from "@/assets/HoneySucklesLogo.svg"
-
+import HoneysucklesLogo from "@/assets/HoneySucklesLogo.svg";
 
 const Section = styled.section`
   padding: 0 24px 96px;
@@ -34,7 +33,7 @@ const SectionTitle = styled.h2`
   font-size: 30px;
   font-weight: 500;
   color: ${({ theme }) => theme.colors.textDark};
-  letter-spacing: 0.40px;
+  letter-spacing: 0.4px;
   line-height: 1.2;
 `;
 
@@ -50,14 +49,33 @@ const Grid = styled.div`
 `;
 
 const RevealWrapper = styled.div`
-  &.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
-  &.reveal.is-visible { opacity: 1; transform: translateY(0); }
+  &.reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.65s ease,
+      transform 0.65s ease;
+  }
+  &.reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 `;
 
-function RevealCard({ children, delay }: { children: React.ReactNode; delay?: number }) {
+function RevealCard({
+  children,
+  delay,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) {
   const ref = useScrollReveal<HTMLDivElement>({ threshold: 0.08 });
   return (
-    <RevealWrapper ref={ref} className="reveal" style={{ transitionDelay: delay ? `${delay}s` : undefined }}>
+    <RevealWrapper
+      ref={ref}
+      className="reveal"
+      style={{ transitionDelay: delay ? `${delay}s` : undefined }}
+    >
       {children}
     </RevealWrapper>
   );
@@ -90,6 +108,9 @@ export default function ProjectsSection() {
               description="UX Design and frontend development for DocSpera's healthcare portal designed to streamline patient scheduling, messaging, and surgical lifecycle tracking on both web and mobile applications."
               accentColor="#0096fa"
               isNda
+              linkText="View Project"
+              linkHref="/projects/docspera"
+              slug="docspera"
             />
           </RevealCard>
           <RevealCard delay={0.1}>
@@ -99,6 +120,9 @@ export default function ProjectsSection() {
               description="UI/UX design and frontend development for a leading medical device company. Focused on creating an intuitive experience for surgeons navigating a connected orthopedic technology ecosystem."
               accentColor="#d71500"
               isNda
+              linkText="View Project"
+              linkHref="/projects/digital-surgery"
+              slug="digital-surgery"
             />
           </RevealCard>
           <RevealCard delay={0.2}>
@@ -108,6 +132,9 @@ export default function ProjectsSection() {
               description="UI/UX design and frontend development designing and assisting building therapy tracking, patient intake flows, and an admin view in one concise dashboard"
               accentColor="#ff9e1b"
               isNda
+              linkText="View Project"
+              linkHref="/projects/medical-therapy"
+              slug="medical-therapy"
             />
           </RevealCard>
         </Grid>
