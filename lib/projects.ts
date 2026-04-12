@@ -71,6 +71,11 @@ const projects: ProjectData[] = [
       year: "2024 - Current",
       tools: ["Figma, React", "Resend, Vercel"],
     },
+    tasks: [
+      "Propose multiple colour and logo and brand designs to compile and combine if needed",
+      "Investigate and propose functionality for email notifications and management",
+      "Build a functional and responsive website using NextJS and Resend for future use",
+    ],
     sections: [
       {
         title: "Homepage",
@@ -121,6 +126,11 @@ const projects: ProjectData[] = [
       year: "2023 - Current",
       tools: ["Figma, React", "Vercel"],
     },
+    tasks: [
+      "Create proposed flows and grid-like designs for presenting work",
+      "Design and implement interest email form using nodemailer",
+      "Design and help brand company logo and social media management",
+    ],
     sections: [
       {
         title: "Homepage",
