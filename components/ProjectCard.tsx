@@ -25,6 +25,7 @@ const Card = styled.div`
 `;
 
 const Thumbnail = styled.div<{ $accentColor: string; $bg?: string }>`
+  cursor: pointer;
   height: 180px;
   border-radius: 16px;
   overflow: hidden;
@@ -33,7 +34,6 @@ const Thumbnail = styled.div<{ $accentColor: string; $bg?: string }>`
   box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.1),
     0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease;
@@ -165,13 +165,20 @@ export default function ProjectCard({
 }: ProjectCardProps) {
   const thumbnailContent = (
     <>
-      {thumbnailSrc && <ThumbnailImg src={thumbnailSrc} alt="" className={isNda ? "nda" : "logo"} />}
+      {thumbnailSrc && (
+        <ThumbnailImg
+          src={thumbnailSrc}
+          alt=""
+          className={isNda ? "nda" : "logo"}
+        />
+      )}
       {isNda && (
         <div
           style={{
             position: "absolute",
             inset: 0,
-            background: "linear-gradient(35deg, hsla(0, 0%, 100%, 0.85), rgba(146, 146, 146, 0.71))",
+            background:
+              "linear-gradient(35deg, hsla(0, 0%, 100%, 0.85), rgba(146, 146, 146, 0.71))",
             backdropFilter: "blur(12px)",
             display: "flex",
             alignItems: "center",
@@ -190,18 +197,27 @@ export default function ProjectCard({
 
   return (
     <Card>
-      <Thumbnail $accentColor={accentColor}>{thumbnailContent}</Thumbnail>
+      {linkHref ? (
+        <Link
+          href={linkHref}
+          style={{ display: "block", borderRadius: 16, overflow: "hidden" }}
+        >
+          <Thumbnail $accentColor={accentColor}>{thumbnailContent}</Thumbnail>
+        </Link>
+      ) : (
+        <Thumbnail $accentColor={accentColor}>{thumbnailContent}</Thumbnail>
+      )}
       <Info>
         <Title>{title}</Title>
         <Subtitle>{subtitle}</Subtitle>
         <Description>{description}</Description>
-        {isNda ? (
-          <UnavailableText>Unavailable to View</UnavailableText>
-        ) : linkHref && linkText ? (
+        {linkHref && linkText ? (
           <CardLink href={linkHref}>
             {linkText}
             <img src={ArrowIcon.src} alt="" />
           </CardLink>
+        ) : isNda ? (
+          <UnavailableText>Unavailable to View</UnavailableText>
         ) : null}
       </Info>
     </Card>
