@@ -51,6 +51,7 @@ export interface ProjectData {
   nda?: boolean;
   stats?: ProjectStat[];
   tasks?: string[];
+  results?: string[];
 }
 //#endregion
 
@@ -170,18 +171,18 @@ const projects: ProjectData[] = [
       year: "2023 - 2024",
       tools: ["Adobe Xd", "NextJS", "TypeScript", "styled-components"],
     },
-    // stats: [
-    //   { value: "—", label: "Screens redesigned", context: "Coming soon" },
-    //   { value: "—", label: "Reduction in task time", context: "Coming soon" },
-    //   { value: "—", label: "Platforms covered", context: "Coming soon" },
-    //   { value: "—", label: "Stakeholder sessions", context: "Coming soon" },
-    // ],
     tasks: [
       "Audited the existing web and mobile interfaces to identify friction points in the surgical scheduling and patient tracking workflows",
       "Designed a new component library to be used across the application and future DocSpera projects",
       "Collaborated with engineering and product teams through weekly design reviews and iterative prototyping sessions",
       "Delivered high-fidelity Adobe Xd prototypes and assisted in building production-ready React components, interactions, and pages",
     ],
+    results: [
+      "Unified branding style across application",
+      "Improved and introduced new processes for internal and external users",
+      "Consolidated over 25+ routes into simple navigation",
+    ],
+    stats: [],
     sections: [],
   },
   {
@@ -201,18 +202,18 @@ const projects: ProjectData[] = [
       year: "2023 - Current",
       tools: ["Figma", "NextJS", "TypeScript", "styled-components"],
     },
-    // stats: [
-    //   { value: "—", label: "Components built", context: "Coming soon" },
-    //   { value: "—", label: "User flows designed", context: "Coming soon" },
-    //   { value: "—", label: "Devices supported", context: "Coming soon" },
-    //   { value: "—", label: "Design iterations", context: "Coming soon" },
-    // ],
     tasks: [
       "Researched existing workflows and surgeon pain points through client discussions",
       "Designed responsive layouts optimized for both desktop and personal device use across medical and patient care",
       "Built a component library in Figma and implemented key UI components in React with full responsive behavior",
       "Continue to implement and design new flows across a sprint-to-sprint basis",
     ],
+    results: [
+      "Multi-role medial support and data visiualization",
+      "Customizable patient journeys before and after their surgery",
+      "International support",
+    ],
+    stats: [],
     sections: [],
   },
   {
@@ -232,12 +233,6 @@ const projects: ProjectData[] = [
       year: "2024",
       tools: ["Adobe Xd", "NextJS", "TypeScript", "styled-components"],
     },
-    // stats: [
-    //   { value: "—", label: "Dashboard views", context: "Coming soon" },
-    //   { value: "—", label: "Patient flows", context: "Coming soon" },
-    //   { value: "—", label: "Admin features", context: "Coming soon" },
-    //   { value: "—", label: "Weeks to ship", context: "Coming soon" },
-    // ],
     tasks: [
       "Mapped out the full patient lifecycle from intake to metrics for providers into one unified dashboard",
       "Designed patient intake forms, organization patient and metric dashboards, and an admin oversight layer as a cohesive single-page application",
@@ -245,6 +240,12 @@ const projects: ProjectData[] = [
       "Simplified a fragmented multi-tool workflow into one unified interface, reducing daily operational overhead for clinical staff",
       "Design and implement an AI Chatbot to assist users of all roles to answer common questions",
     ],
+    results: [
+      "Unified dashboard for patient and organization therapy metrics",
+      "B2B handoff with an easy user and organization admin management portal",
+      "AI Support chatbot reducing user confusion aleviating management and developer time",
+    ],
+    stats: [],
     sections: [],
   },
 ];

@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import styled from 'styled-components';
-import Link from 'next/link';
-import { useScrollReveal } from '@/lib/useScrollReveal';
-import type { ProjectData } from '@/lib/projects';
+import styled from "styled-components";
+import Link from "next/link";
+import { useScrollReveal } from "@/lib/useScrollReveal";
+import type { ProjectData } from "@/lib/projects";
+import projects from "@/lib/projects";
 
 // ─── Layout ────────────────────────────────────────────────────────────────
 
@@ -35,9 +36,13 @@ const BackLink = styled(Link)`
   letter-spacing: -0.15px;
   transition: color 0.2s ease;
 
-  &:hover { color: ${({ theme }) => theme.colors.textDark}; }
+  &:hover {
+    color: ${({ theme }) => theme.colors.textDark};
+  }
 
-  svg { flex-shrink: 0; }
+  svg {
+    flex-shrink: 0;
+  }
 `;
 
 // ─── Header ─────────────────────────────────────────────────────────────────
@@ -144,7 +149,9 @@ const HeroImageWrap = styled.div`
   border-radius: 24px;
   overflow: hidden;
   background: ${({ theme }) => theme.colors.border};
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    0 1px 2px -1px rgba(0, 0, 0, 0.1);
 
   img {
     display: block;
@@ -164,7 +171,7 @@ const ArticleBody = styled.div`
   gap: 56px;
 `;
 
-// ─── The Ask + sidebar ──────────────────────────────────────────────────────
+// ─── Problem Statement + sidebar ─────────────────────────────────────────────
 
 const AskRow = styled.div`
   display: flex;
@@ -193,7 +200,7 @@ const SectionHeading = styled.h2`
   gap: 12px;
 
   &::before {
-    content: '';
+    content: "";
     display: block;
     width: 24px;
     height: 2px;
@@ -246,7 +253,9 @@ const OverviewRow = styled.li`
   padding: 10px 0;
   border-bottom: 1px solid ${({ theme }) => theme.colors.pillBorder};
 
-  &:last-child { border-bottom: none; }
+  &:last-child {
+    border-bottom: none;
+  }
 `;
 
 const OverviewKey = styled.span`
@@ -265,16 +274,16 @@ const OverviewVal = styled.span`
   text-align: right;
 `;
 
-// ─── Tasks section ───────────────────────────────────────────────────────────
+// ─── Tasks / Results shared list ─────────────────────────────────────────────
 
-const TasksList = styled.ul`
+const ItemList = styled.ul`
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: 0;
 `;
 
-const TaskItem = styled.li`
+const ItemRow = styled.li<{ $variant?: "task" | "result" }>`
   font-size: 18px;
   font-weight: 400;
   color: ${({ theme }) => theme.colors.textMid};
@@ -286,15 +295,18 @@ const TaskItem = styled.li`
   align-items: baseline;
   gap: 14px;
 
-  &:first-child { border-top: 1px solid ${({ theme }) => theme.colors.border}; }
+  &:first-child {
+    border-top: 1px solid ${({ theme }) => theme.colors.border};
+  }
 
   &::before {
-    content: '';
+    content: "";
     display: block;
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: ${({ theme }) => theme.colors.textAccent};
+    background: ${({ theme, $variant }) =>
+      $variant === "result" ? theme.colors.textDark : theme.colors.textAccent};
     flex-shrink: 0;
     margin-top: 9px;
   }
@@ -345,6 +357,16 @@ const StatContext = styled.span`
   letter-spacing: 0.1px;
 `;
 
+const MetricsPlaceholder = styled.p`
+  font-size: 15px;
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.textFaint};
+  letter-spacing: -0.15px;
+  padding: 20px 0;
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+  text-align: center;
+`;
+
 // ─── Process sections ────────────────────────────────────────────────────────
 
 const ProcessSection = styled.div`
@@ -367,14 +389,18 @@ const LiveLink = styled.a`
   text-decoration: underline;
   transition: opacity 0.2s ease;
 
-  &:hover { opacity: 0.7; }
+  &:hover {
+    opacity: 0.7;
+  }
 `;
 
 const Figure = styled.div`
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid ${({ theme }) => theme.colors.border};
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    0 1px 2px -1px rgba(0, 0, 0, 0.1);
 
   img {
     display: block;
@@ -393,44 +419,95 @@ const FigureGrid = styled.div`
   }
 `;
 
-// ─── Explore More CTA ────────────────────────────────────────────────────────
+// ─── Project nav strip ───────────────────────────────────────────────────────
 
-const ExploreRow = styled.div`
+const ProjectNavWrap = styled.div`
   border-top: 1px solid ${({ theme }) => theme.colors.border};
-  padding: 48px 0 80px;
+  padding: 40px 0 80px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
 `;
 
-const ExploreBtn = styled(Link)`
+const ProjectNavLabel = styled.p`
+  font-size: 12px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.textFaint};
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+`;
+
+const ProjectNavList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
+
+const ProjectNavItem = styled(Link)<{ $active?: boolean }>`
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  height: 56px;
-  padding: 0 40px;
+  gap: 8px;
+  padding: 10px 18px;
   border-radius: 9999px;
-  background: ${({ theme }) => theme.colors.textDark};
-  color: #fdfbf7;
-  font-size: 18px;
+  border: 1px solid
+    ${({ theme, $active }) =>
+      $active ? theme.colors.textDark : theme.colors.border};
+  background: ${({ theme, $active }) =>
+    $active ? theme.colors.textDark : "transparent"};
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: -0.44px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  transition: opacity 0.2s ease;
+  color: ${({ theme, $active }) =>
+    $active ? "#fdfbf7" : theme.colors.textMid};
+  letter-spacing: -0.15px;
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+  pointer-events: ${({ $active }) => ($active ? "none" : "auto")};
 
-  &:hover { opacity: 0.8; }
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.textDark};
+    color: ${({ theme }) => theme.colors.textDark};
+  }
+`;
+
+const NdaDot = styled.span`
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.5;
 `;
 
 // ─── Reveal wrapper ──────────────────────────────────────────────────────────
 
 const Reveal = styled.div`
-  &.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
-  &.reveal.is-visible { opacity: 1; transform: translateY(0); }
+  &.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s ease;
+  }
+  &.reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 `;
 
-function RevealBlock({ children, delay }: { children: React.ReactNode; delay?: number }) {
+function RevealBlock({
+  children,
+  delay,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) {
   const ref = useScrollReveal<HTMLDivElement>({ threshold: 0.06 });
   return (
-    <Reveal ref={ref} className="reveal" style={delay ? { transitionDelay: `${delay}s` } : undefined}>
+    <Reveal
+      ref={ref}
+      className="reveal"
+      style={delay ? { transitionDelay: `${delay}s` } : undefined}
+    >
       {children}
     </Reveal>
   );
@@ -449,7 +526,13 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
         <BackRow>
           <BackLink href="/#work">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M10 12L6 8l4-4" stroke="#8c8273" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path
+                d="M10 12L6 8l4-4"
+                stroke="#8c8273"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
             Back to Work
           </BackLink>
@@ -463,8 +546,21 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
             {project.nda && (
               <NdaPill>
                 <svg width="11" height="12" viewBox="0 0 12 14" fill="none">
-                  <rect x="1" y="6" width="10" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.4"/>
-                  <path d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                  <rect
+                    x="1"
+                    y="6"
+                    width="10"
+                    height="7"
+                    rx="1.5"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                  />
+                  <path
+                    d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                  />
                 </svg>
                 NDA Protected
               </NdaPill>
@@ -492,11 +588,11 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
 
         {/* Article body */}
         <ArticleBody>
-          {/* The Ask + Overview sidebar */}
+          {/* Problem Statement + Overview sidebar */}
           <RevealBlock>
             <AskRow>
               <AskBlock>
-                <SectionHeading>The Ask</SectionHeading>
+                <SectionHeading>Problem Statement</SectionHeading>
                 <AskText>{project.ask}</AskText>
               </AskBlock>
               <OverviewCard>
@@ -514,7 +610,9 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
                     <OverviewKey>Tools</OverviewKey>
                     <OverviewVal>
                       {project.overview.tools.map((line, i) => (
-                        <span key={i} style={{ display: 'block' }}>{line}</span>
+                        <span key={i} style={{ display: "block" }}>
+                          {line}
+                        </span>
                       ))}
                     </OverviewVal>
                   </OverviewRow>
@@ -527,26 +625,49 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
           {project.tasks && project.tasks.length > 0 && (
             <RevealBlock>
               <SectionHeading>Tasks</SectionHeading>
-              <TasksList>
+              <ItemList>
                 {project.tasks.map((task, i) => (
-                  <TaskItem key={i}>{task}</TaskItem>
+                  <ItemRow key={i} $variant="task">
+                    {task}
+                  </ItemRow>
                 ))}
-              </TasksList>
+              </ItemList>
             </RevealBlock>
           )}
 
-          {/* Stats strip */}
-          {project.stats && project.stats.length > 0 && (
+          {/* Results */}
+          {project.results && project.results.length > 0 && (
             <RevealBlock>
-              <StatsGrid>
-                {project.stats.map((stat, i) => (
-                  <StatCard key={i}>
-                    <StatValue>{stat.value}</StatValue>
-                    <StatLabel>{stat.label}</StatLabel>
-                    {stat.context && <StatContext>{stat.context}</StatContext>}
-                  </StatCard>
+              <SectionHeading>Results</SectionHeading>
+              <ItemList>
+                {project.results.map((result, i) => (
+                  <ItemRow key={i} $variant="result">
+                    {result}
+                  </ItemRow>
                 ))}
-              </StatsGrid>
+              </ItemList>
+            </RevealBlock>
+          )}
+
+          {/* Metrics */}
+          {project.stats !== undefined && (
+            <RevealBlock>
+              <SectionHeading>Metrics</SectionHeading>
+              {project.stats.length > 0 ? (
+                <StatsGrid>
+                  {project.stats.map((stat, i) => (
+                    <StatCard key={i}>
+                      <StatValue>{stat.value}</StatValue>
+                      <StatLabel>{stat.label}</StatLabel>
+                      {stat.context && (
+                        <StatContext>{stat.context}</StatContext>
+                      )}
+                    </StatCard>
+                  ))}
+                </StatsGrid>
+              ) : (
+                <MetricsPlaceholder>Metrics coming soon</MetricsPlaceholder>
+              )}
             </RevealBlock>
           )}
 
@@ -557,7 +678,11 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
                 <SectionTitleRow>
                   <SectionHeading>{section.title}</SectionHeading>
                   {section.liveUrl && (
-                    <LiveLink href={section.liveUrl} target="_blank" rel="noopener noreferrer">
+                    <LiveLink
+                      href={section.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       View Live Site
                     </LiveLink>
                   )}
@@ -567,14 +692,14 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
                   <FigureGrid>
                     {section.figures.map((fig, j) => (
                       <Figure key={j}>
-                        <img src={fig.src} alt={fig.alt ?? ''} />
+                        <img src={fig.src} alt={fig.alt ?? ""} />
                       </Figure>
                     ))}
                   </FigureGrid>
                 ) : (
                   section.figures.map((fig, j) => (
                     <Figure key={j}>
-                      <img src={fig.src} alt={fig.alt ?? ''} />
+                      <img src={fig.src} alt={fig.alt ?? ""} />
                     </Figure>
                   ))
                 )}
@@ -582,10 +707,47 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
             </RevealBlock>
           ))}
 
-          {/* Explore more */}
-          <ExploreRow>
-            <ExploreBtn href="/#work">Explore More Work</ExploreBtn>
-          </ExploreRow>
+          {/* Project nav */}
+          <ProjectNavWrap>
+            <ProjectNavLabel>More Projects</ProjectNavLabel>
+            <ProjectNavList>
+              {projects.map((p) => (
+                <ProjectNavItem
+                  key={p.slug}
+                  href={`/projects/${p.slug}`}
+                  $active={p.slug === project.slug}
+                >
+                  {p.title}
+                  {p.nda && (
+                    <NdaDot>
+                      <svg
+                        width="9"
+                        height="11"
+                        viewBox="0 0 12 14"
+                        fill="none"
+                      >
+                        <rect
+                          x="1"
+                          y="6"
+                          width="10"
+                          height="7"
+                          rx="1.5"
+                          stroke="currentColor"
+                          strokeWidth="1.4"
+                        />
+                        <path
+                          d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6"
+                          stroke="currentColor"
+                          strokeWidth="1.4"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </NdaDot>
+                  )}
+                </ProjectNavItem>
+              ))}
+            </ProjectNavList>
+          </ProjectNavWrap>
         </ArticleBody>
       </ContentWrap>
     </Page>
