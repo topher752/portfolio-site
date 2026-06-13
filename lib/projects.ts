@@ -429,7 +429,7 @@ const projects: ProjectData[] = [
         figure: {
           src: AgenticWorkflowsHome.src,
           alt: "Workflows home — rows read as sentences",
-          focusPosition: "center top",
+          focusPosition: "left top",
         },
       },
       {
@@ -447,7 +447,7 @@ const projects: ProjectData[] = [
         figure: {
           src: AgenticSendMessage.src,
           alt: "Send message action configuration",
-          focusPosition: "center top",
+          focusPosition: "left top",
         },
       },
       {
@@ -456,7 +456,7 @@ const projects: ProjectData[] = [
         figure: {
           src: AgenticChatComplete.src,
           alt: "Assistant panel alongside the builder",
-          focusPosition: "right top",
+          focusPosition: "left top",
         },
       },
     ],
