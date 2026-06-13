@@ -37,15 +37,41 @@ const LightboxDialog = styled.dialog`
   overflow: hidden;
   color: #fff;
 
+  opacity: 0;
+  transition:
+    opacity 220ms ease,
+    overlay 220ms ease allow-discrete,
+    display 220ms ease allow-discrete;
+
   &::backdrop {
     background: rgba(0, 0, 0, 0.88);
     backdrop-filter: blur(4px);
+    opacity: 0;
+    transition:
+      opacity 220ms ease,
+      backdrop-filter 220ms ease,
+      overlay 220ms ease allow-discrete,
+      display 220ms ease allow-discrete;
   }
 
   &[open] {
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 1;
+
+    &::backdrop {
+      opacity: 1;
+    }
+  }
+
+  @starting-style {
+    &[open] {
+      opacity: 0;
+    }
+    &[open]::backdrop {
+      opacity: 0;
+    }
   }
 `;
 
@@ -70,6 +96,23 @@ const LightboxInner = styled.div`
     border-radius: 8px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
     cursor: default;
+    transform: scale(0.96);
+    transition:
+      transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 240ms ease;
+    opacity: 0;
+  }
+
+  dialog[open] & img {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  @starting-style {
+    dialog[open] & img {
+      transform: scale(0.96);
+      opacity: 0;
+    }
   }
 `;
 
