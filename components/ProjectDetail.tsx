@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useScrollReveal } from "@/lib/useScrollReveal";
 import type { ProjectData, ProjectShowcase } from "@/lib/projects";
 import projects from "@/lib/projects";
+import { ZoomImg, useLightbox, type ZoomFn } from "./Lightbox";
 
 const Page = styled.div`
   background: ${({ theme }) => theme.colors.bg};
@@ -795,6 +796,7 @@ const Reveal = styled.div`
   }
 `;
 
+
 function RevealBlock({
   children,
   delay,
@@ -814,7 +816,13 @@ function RevealBlock({
   );
 }
 
-function ShowcaseBlock({ showcase }: { showcase: ProjectShowcase }) {
+function ShowcaseBlock({
+  showcase,
+  onZoom,
+}: {
+  showcase: ProjectShowcase;
+  onZoom: ZoomFn;
+}) {
   if (showcase.layout === "mobile-rail") {
     return (
       <Showcase>
@@ -822,7 +830,7 @@ function ShowcaseBlock({ showcase }: { showcase: ProjectShowcase }) {
           {showcase.figures.map((fig, i) => (
             <MobileTile key={i}>
               <MobileTileImg>
-                <img src={fig.src} alt={fig.alt ?? ""} />
+                <ZoomImg src={fig.src} alt={fig.alt ?? ""} onZoom={onZoom} />
               </MobileTileImg>
               {fig.caption && (
                 <MobileTileCaption>{fig.caption}</MobileTileCaption>
@@ -838,7 +846,11 @@ function ShowcaseBlock({ showcase }: { showcase: ProjectShowcase }) {
       {showcase.hero && (
         <div>
           <ShowcaseHero>
-            <img src={showcase.hero.src} alt={showcase.hero.alt ?? ""} />
+            <ZoomImg
+              src={showcase.hero.src}
+              alt={showcase.hero.alt ?? ""}
+              onZoom={onZoom}
+            />
           </ShowcaseHero>
           {showcase.hero.caption && (
             <ShowcaseCaption>{showcase.hero.caption}</ShowcaseCaption>
@@ -849,7 +861,7 @@ function ShowcaseBlock({ showcase }: { showcase: ProjectShowcase }) {
         {showcase.figures.map((fig, i) => (
           <ShowcaseTile key={i}>
             <ShowcaseTileImg $focus={fig.focusPosition}>
-              <img src={fig.src} alt={fig.alt ?? ""} />
+              <ZoomImg src={fig.src} alt={fig.alt ?? ""} onZoom={onZoom} />
             </ShowcaseTileImg>
             {fig.caption && <ShowcaseCaption>{fig.caption}</ShowcaseCaption>}
           </ShowcaseTile>
@@ -867,6 +879,8 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
   const hasShowcase = project.showcase && project.showcase.figures.length > 0;
   const hasDecisions = project.decisions && project.decisions.length > 0;
   const hasOutcomes = !!project.outcomes;
+
+  const { open: openLightbox, element: lightboxElement } = useLightbox();
 
   return (
     <Page>
@@ -931,11 +945,16 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
         {/* Hero image */}
         {project.heroImage && (
           <HeroImageWrap $compact={project.heroImageCompact}>
-            <img src={project.heroImage} alt={`${project.title} hero`} />
+            <ZoomImg
+              src={project.heroImage}
+              alt={`${project.title} hero`}
+              onZoom={openLightbox}
+            />
             {project.heroImageExtra && (
-              <img
+              <ZoomImg
                 src={project.heroImageExtra}
                 alt={`${project.title} hero secondary`}
+                onZoom={openLightbox}
               />
             )}
           </HeroImageWrap>
@@ -992,9 +1011,10 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
                       </div>
                       {step.figure && (
                         <ProcessStepFigure $focus={step.figure.focusPosition}>
-                          <img
+                          <ZoomImg
                             src={step.figure.src}
                             alt={step.figure.alt ?? ""}
+                            onZoom={openLightbox}
                           />
                         </ProcessStepFigure>
                       )}
@@ -1011,7 +1031,10 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
               <SectionHeading>
                 {project.showcase!.title ?? "Showcase"}
               </SectionHeading>
-              <ShowcaseBlock showcase={project.showcase!} />
+              <ShowcaseBlock
+                showcase={project.showcase!}
+                onZoom={openLightbox}
+              />
             </RevealBlock>
           )}
 
@@ -1028,7 +1051,11 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
                     </DecisionText>
                     {d.figure && (
                       <DecisionFigure>
-                        <img src={d.figure.src} alt={d.figure.alt ?? ""} />
+                        <ZoomImg
+                          src={d.figure.src}
+                          alt={d.figure.alt ?? ""}
+                          onZoom={openLightbox}
+                        />
                       </DecisionFigure>
                     )}
                   </DecisionCard>
@@ -1113,14 +1140,22 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
                   <FigureGrid>
                     {section.figures.map((fig, j) => (
                       <Figure key={j}>
-                        <img src={fig.src} alt={fig.alt ?? ""} />
+                        <ZoomImg
+                          src={fig.src}
+                          alt={fig.alt ?? ""}
+                          onZoom={openLightbox}
+                        />
                       </Figure>
                     ))}
                   </FigureGrid>
                 ) : (
                   section.figures.map((fig, j) => (
                     <Figure key={j}>
-                      <img src={fig.src} alt={fig.alt ?? ""} />
+                      <ZoomImg
+                        src={fig.src}
+                        alt={fig.alt ?? ""}
+                        onZoom={openLightbox}
+                      />
                     </Figure>
                   ))
                 )}
@@ -1171,6 +1206,8 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
           </ProjectNavWrap>
         </ArticleBody>
       </ContentWrap>
+
+      {lightboxElement}
     </Page>
   );
 }
