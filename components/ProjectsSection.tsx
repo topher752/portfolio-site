@@ -5,6 +5,9 @@ import ProjectCard from "./ProjectCard";
 import { useScrollReveal } from "@/lib/useScrollReveal";
 import NextRepLogo from "@/assets/NextRepLogo.svg";
 import HoneysucklesLogo from "@/assets/HoneySucklesLogo.svg";
+import DocSperaWebThumb from "@/assets/RedesignScreenshots/PracticeDashboard.png";
+import DocSperaMobileThumb from "@/assets/MobileApp/Overview.png";
+import DocSperaWorkflowsThumb from "@/assets/AgenticAI/WorkflowsHome.png";
 
 const Section = styled.section`
   padding: 0 24px 96px;
@@ -103,17 +106,45 @@ export default function ProjectsSection() {
         <Grid>
           <RevealCard delay={0}>
             <ProjectCard
-              title="DocSpera Redesign"
-              subtitle="Web Application & Mobile App Redesign"
-              description="UX Design and frontend development for DocSpera's healthcare portal designed to streamline patient scheduling, messaging, and surgical lifecycle tracking on both web and mobile applications."
+              title="DocSpera Web Redesign"
+              subtitle="Surgical Coordination Portal"
+              description="Ground-up redesign of DocSpera's surgical coordination portal — unifying scheduling, case pipelines, and messaging into one consistent practice dashboard."
               accentColor="#0096fa"
-              isNda
+              thumbnailSrc={DocSperaWebThumb.src}
+              thumbnailMode="cover"
               linkText="View Project"
               linkHref="/projects/docspera"
               slug="docspera"
             />
           </RevealCard>
           <RevealCard delay={0.1}>
+            <ProjectCard
+              title="DocSpera Mobile App"
+              subtitle="Native Mobile Companion"
+              description="Mobile companion designed for surgeons checking case state, schedules, and CPT codes between procedures — fast, scannable, one-handed."
+              accentColor="#0096fa"
+              thumbnailSrc={DocSperaMobileThumb.src}
+              thumbnailMode="cover"
+              thumbnailPosition="center top"
+              linkText="View Project"
+              linkHref="/projects/docspera-mobile"
+              slug="docspera-mobile"
+            />
+          </RevealCard>
+          <RevealCard delay={0.2}>
+            <ProjectCard
+              title="DocSpera Workflow Automation"
+              subtitle="Agentic Workflow Builder"
+              description="A visual workflow builder that lets non-engineering staff wire up triggers, conditions, and actions across the portal — without writing code."
+              accentColor="#0096fa"
+              thumbnailSrc={DocSperaWorkflowsThumb.src}
+              thumbnailMode="cover"
+              linkText="View Project"
+              linkHref="/projects/docspera-workflows"
+              slug="docspera-workflows"
+            />
+          </RevealCard>
+          <RevealCard delay={0.3}>
             <ProjectCard
               title="Digital Surgery Platform"
               subtitle="Responsive Web Application"
@@ -125,7 +156,7 @@ export default function ProjectsSection() {
               slug="digital-surgery"
             />
           </RevealCard>
-          <RevealCard delay={0.2}>
+          <RevealCard delay={0.4}>
             <ProjectCard
               title="Medical Therapy Dashboard"
               subtitle="UI/UX Design & Frontend Development"

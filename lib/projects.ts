@@ -1,3 +1,4 @@
+//#region imports
 // nextrep imports
 import NextStart from "@/assets/nextrep/NextRepStart.webp";
 import OfferEmail from "@/assets/nextrep/OfferEmail.webp";
@@ -12,6 +13,39 @@ import About from "@/assets/honeysuckles/About.webp";
 import Arrangements from "@/assets/honeysuckles/Arrangements.webp";
 import SpecialOccasions from "@/assets/honeysuckles/SpecialOccasions.webp";
 
+// docspera web redesign imports
+import RedesignAdmin from "@/assets/RedesignScreenshots/Admin.png";
+import RedesignBookingTemplates from "@/assets/RedesignScreenshots/BookingTemplates.png";
+import RedesignCreateCase from "@/assets/RedesignScreenshots/CreateCase.png";
+import RedesignDailySchedule from "@/assets/RedesignScreenshots/DailySchedule.png";
+import RedesignLocationMappings from "@/assets/RedesignScreenshots/LocationMappings.png";
+import RedesignMessages from "@/assets/RedesignScreenshots/Messages.png";
+import RedesignPostOpCases from "@/assets/RedesignScreenshots/Post-OpCases.png";
+import RedesignPracticeDashboard from "@/assets/RedesignScreenshots/PracticeDashboard.png";
+import RedesignPreOpCases from "@/assets/RedesignScreenshots/PreOp-Cases.png";
+import RedesignWorklists from "@/assets/RedesignScreenshots/Worklists.png";
+
+// docspera mobile app imports
+import MobileOverview from "@/assets/MobileApp/Overview.png";
+import MobileCalendar from "@/assets/MobileApp/Calendar.png";
+import MobileCaseInfo from "@/assets/MobileApp/CaseInfo.png";
+import MobileContacts from "@/assets/MobileApp/Contacts.png";
+import MobileInbox from "@/assets/MobileApp/Inbox.png";
+import MobileCPTCodes from "@/assets/MobileApp/CPTCodes.png";
+import MobileLogin from "@/assets/MobileApp/Login.png";
+import MobileComponentList from "@/assets/MobileApp/ComponentList.png";
+import MobileScreenVariants from "@/assets/MobileApp/ScreenVariantDesigns.png";
+
+// docspera agentic ai imports
+import AgenticWorkflowsHome from "@/assets/AgenticAI/WorkflowsHome.png";
+import AgenticWorkflowDetails from "@/assets/AgenticAI/WorkflowDetails.png";
+import AgenticChatComplete from "@/assets/AgenticAI/ChatComplete.png";
+import AgenticFetchTray from "@/assets/AgenticAI/FetchTray.png";
+import AgenticSendMessage from "@/assets/AgenticAI/SendMessage.png";
+import AgenticSendStryker from "@/assets/AgenticAI/SendStryker.png";
+import AgenticTagCase from "@/assets/AgenticAI/TagCase.png";
+//#endregion
+
 //#region interfaces
 export interface ProjectOverview {
   client: string;
@@ -22,6 +56,8 @@ export interface ProjectOverview {
 export interface ProjectFigure {
   src: string;
   alt?: string;
+  caption?: string;
+  focusPosition?: string;
 }
 
 export interface ProjectSection {
@@ -35,6 +71,25 @@ export interface ProjectStat {
   value: string;
   label: string;
   context?: string;
+}
+
+export interface ProjectProcessStep {
+  title: string;
+  body: string;
+  figure?: ProjectFigure & { focusPosition?: string };
+}
+
+export interface ProjectShowcase {
+  title?: string;
+  layout: "marquee-grid" | "mobile-rail";
+  hero?: ProjectFigure;
+  figures: ProjectFigure[];
+}
+
+export interface ProjectDecision {
+  title: string;
+  body: string;
+  figure?: ProjectFigure;
 }
 
 export interface ProjectData {
@@ -52,6 +107,13 @@ export interface ProjectData {
   stats?: ProjectStat[];
   tasks?: string[];
   results?: string[];
+  // New, richer narrative fields used by DocSpera trio:
+  process?: ProjectProcessStep[];
+  showcase?: ProjectShowcase;
+  decisions?: ProjectDecision[];
+  outcomes?: string;
+  heroImageCompact?: boolean;
+  heroImageExtra?: string;
 }
 //#endregion
 
@@ -157,32 +219,297 @@ const projects: ProjectData[] = [
   {
     slug: "docspera",
     category: "Professional Project",
-    title: "DocSpera Redesign",
+    title: "DocSpera Web Redesign",
     description:
-      "UX design and frontend development for DocSpera's healthcare portal, streamlining patient scheduling, messaging, and surgical lifecycle tracking across web and mobile.",
+      "Ground-up redesign of DocSpera's surgical coordination portal utilizing scheduling, case lifesycles, and messaging into one unified practice dasbhoard for HCPs in a new, modernized look.",
     role: "UX Designer & Frontend Developer",
     responsibilities:
-      "End-to-end UX redesign, component library development, web and mobile-tablet designs",
-    heroImage: "",
-    nda: true,
-    ask: "DocSpera needed a ground-up redesign of their healthcare portal to reduce friction for surgical coordinators and physicians managing complex patient pipelines. The existing interface was fragmented across platforms with inconsistent patterns, making critical workflows slower than they needed to be. The goal was a unified, intuitive experience across both web and mobile that matched how clinical teams actually work.",
+      "End-to-end UX audit, component library, page-level redesigns, and React implementation",
+    heroImage: RedesignPracticeDashboard.src,
+    nda: false,
+    ask: "DocSpera's initial surgical coordination portal included inconsistent screens, massive CLS, overloaded tables, and separated compnents. Users were shown multiple routes to manage a single case, and the visual language had drifted across teams. The ask required was reviving an ourdated system with new branding, best practices, and interactions that reduced the number of pages, modals, and click events without breaking the workflows clinical teams already depend on.",
     overview: {
       client: "DocSpera",
       year: "2023 - 2024",
       tools: ["Adobe Xd", "NextJS", "TypeScript", "styled-components"],
     },
-    tasks: [
-      "Audited the existing web and mobile interfaces to identify friction points in the surgical scheduling and patient tracking workflows",
-      "Designed a new component library to be used across the application and future DocSpera projects",
-      "Collaborated with engineering and product teams through weekly design reviews and iterative prototyping sessions",
-      "Delivered high-fidelity Adobe Xd prototypes and assisted in building production-ready React components, interactions, and pages",
+    process: [
+      {
+        title: "Familiarize and Audit the exsisting Application",
+        body: "Fully explor the entire application flow by flow, including the entire lifesycle from creating a case, adding users, communications with patients pre-op and post-op ending with completion. The audit surfaced redundant table views, mixed styles and inconsistent header patterns.",
+        figure: {
+          src: RedesignWorklists.src,
+          alt: "Worklists view used during audit",
+          focusPosition: "left top",
+        },
+      },
+      {
+        title: "Defined a shared component library",
+        body: "Standardized table rows, filter bars, status pills, and the case header pattern so every page in the portal stays consistent, future proofing any additional pages. This process included redesigning basic components and defining a clear styleguide",
+        figure: {
+          src: RedesignPracticeDashboard.src,
+          alt: "Practice dashboard showing shared components",
+          focusPosition: "left top",
+        },
+      },
+      {
+        title: "Redesigned by surface, not by screen",
+        body: "Redesigned each workflow: scheduling, pre-op and post-op lifecycles, admin, and messaging. Each surface got a unified header, filter pattern, and density level before any individual screen was touched using the shared styles.",
+        figure: {
+          src: RedesignPreOpCases.src,
+          alt: "Pre-op cases surface",
+          focusPosition: "left top",
+        },
+      },
+      {
+        title: "Iterated with engineering weekly",
+        body: "Weekly design reviews with engineering and seniors kept scope honest and showcased and other improvements received from customers. This lead to lots of edge cases being identified and improved, leadning to better future planning.",
+        figure: {
+          src: RedesignCreateCase.src,
+          alt: "Create case form",
+          focusPosition: "center top",
+        },
+      },
     ],
-    results: [
-      "Unified branding style across application",
-      "Improved and introduced new processes for internal and external users",
-      "Consolidated over 25+ routes into simple navigation",
-    ],
+    showcase: {
+      title: "Inside the Portal",
+      layout: "marquee-grid",
+      hero: {
+        src: RedesignPracticeDashboard.src,
+        alt: "Practice dashboard with all-cases worklist",
+        caption: "Practice dashboard",
+      },
+      figures: [
+        {
+          src: RedesignDailySchedule.src,
+          alt: "Daily schedule view",
+          caption: "Daily schedule",
+        },
+        {
+          src: RedesignWorklists.src,
+          alt: "Worklists view",
+          caption: "Worklists",
+        },
+        {
+          src: RedesignPreOpCases.src,
+          alt: "Pre-op cases pipeline",
+          caption: "Pre-op Lifescycle",
+        },
+        {
+          src: RedesignPostOpCases.src,
+          alt: "Post-op cases pipeline",
+          caption: "Post-op Lifescycle",
+        },
+        {
+          src: RedesignCreateCase.src,
+          alt: "Create case form",
+          caption: "Create case",
+        },
+        {
+          src: RedesignBookingTemplates.src,
+          alt: "Booking templates",
+          caption: "Booking templates",
+        },
+        {
+          src: RedesignMessages.src,
+          alt: "Messaging view",
+          caption: "Messaging",
+        },
+        {
+          src: RedesignLocationMappings.src,
+          alt: "Location mappings admin",
+          caption: "Location mappings",
+        },
+        {
+          src: RedesignAdmin.src,
+          alt: "Admin settings",
+          caption: "Admin",
+        },
+      ],
+    },
+    outcomes:
+      "Consolidated 25+ disconnected routes into a navigation a coordinator can hold in their head. The component library cut the cost of every subsequent feature, with the mobile app and the workflow automation tool both inheriting designs, and gave DocSpera one consistent visual language.",
     stats: [],
+    sections: [],
+  },
+  {
+    slug: "docspera-mobile",
+    category: "Professional Project",
+    title: "DocSpera Mobile App",
+    description:
+      "Native-feeling mobile companion to the DocSpera portal: designed for surgeons checking case state, schedules, and CPT codes between procedures.",
+    role: "UX Designer",
+    responsibilities:
+      "Mobile UX Design, component variants, interaction prototyping",
+    heroImage: MobileOverview.src,
+    heroImageExtra: MobileCalendar.src,
+    heroImageCompact: true,
+    nda: false,
+    ask: "Similar to the main webapp redesign, the companion mobile application required an modernized redo for users. This included redesigning existing funtionality, but idenifying improvements to port over including existing DocSpera functionality, new push notifications, and building in biometric native functionality",
+    overview: {
+      client: "DocSpera",
+      year: "2023 - 2024",
+      tools: ["Adobe Xd"],
+    },
+    process: [
+      {
+        title: "Identify workflows and audit",
+        body: "Mapped the realistic workflows a surgeon or provider would do when opening the app: between procedures, figuring out their schedule, and staying up-to-date with their careteams.",
+      },
+      {
+        title: "Built a mobile-specific component set",
+        body: "Using the web versions components as a base, I pared them down to a smaller kit of cards, status badges, mobile-friendly variants, and list rows tuned for thumb reach and one-handed reading.",
+      },
+      {
+        title: "Designed status as the primary signal",
+        body: "Color and label do most of the work on small screens. Confirmation states, readiness, and unconfirmed cases each got a distinct visual treatment so a surgeon could triage the day at a glance.",
+      },
+      {
+        title: "Validated screen variants before committing",
+        body: "Ran multiple visual directions for the case header and overview rows side-by-side before locking the final pattern, which is where the screen variant board came from.",
+      },
+    ],
+    showcase: {
+      title: "Mobile Screens",
+      layout: "mobile-rail",
+      figures: [
+        { src: MobileOverview.src, alt: "Overview screen", caption: "Overview" },
+        { src: MobileCalendar.src, alt: "Calendar", caption: "Calendar" },
+        { src: MobileCaseInfo.src, alt: "Case info", caption: "Case info" },
+        { src: MobileCPTCodes.src, alt: "CPT codes", caption: "CPT codes" },
+        { src: MobileInbox.src, alt: "Inbox", caption: "Inbox" },
+        { src: MobileContacts.src, alt: "Contacts", caption: "Contacts" },
+        { src: MobileLogin.src, alt: "Login", caption: "Login" },
+      ],
+    },
+    decisions: [
+      {
+        title: "Component library, in miniature",
+        body: "A standalone mobile component sheet kept the team aligned on spacing, density, icons, and status treatment for easy access.",
+        figure: {
+          src: MobileComponentList.src,
+          alt: "Mobile component list",
+        },
+      },
+      {
+        title: "Variants before commitment",
+        body: "Before locking screen patterns, I produced a side-by-side variant board to compare information density, status placement, and process for open discussion and review",
+        figure: {
+          src: MobileScreenVariants.src,
+          alt: "Mobile screen variant designs",
+        },
+      },
+    ],
+    outcomes:
+      "Delivered a coherent mobile companion that providers can use. The screens hit a consistent density, responsive across native phone settings, status reads at a glance, and the underlying component sheet gives DocSpera a foundation to keep extending the mobile experience.",
+    stats: [],
+    sections: [],
+  },
+  {
+    slug: "docspera-workflows",
+    category: "Professional Project",
+    title: "DocSpera Workflow Automation",
+    description:
+      "Agentic workflow builder that lets DocSpera staff and partners wire up triggers, conditions, and actions across the portal, with some examples include sending messages, tagging cases, and adding careteam members without writing code.",
+    role: "UX Designer",
+    responsibilities:
+      "UX Design, review, and integration investigation",
+    heroImage: AgenticWorkflowsHome.src,
+    nda: false,
+    ask: "DocSpera needed to give non-engineering staff a way to automate repetitive coordination tasks that used to require an entire sprint for implementation. The challenge was making something powerful enough to compose real workflows, but readable enough that a coordinator could open it cold and understand what was already wired up.",
+    overview: {
+      client: "DocSpera",
+      year: "2024",
+      tools: ["Adobe Xd"],
+    },
+    process: [
+      {
+        title: "Treated each workflow as a sentence",
+        body: "The core unit reads left-to-right: a trigger, a condition, an action. Designing it as a sentence made the list view scannable and kept the mental model close to how people describe the rule out loud.",
+        figure: {
+          src: AgenticWorkflowsHome.src,
+          alt: "Workflows home — rows read as sentences",
+          focusPosition: "center top",
+        },
+      },
+      {
+        title: "Designed for browse, then edit",
+        body: "The home view leads with browsing existing workflows with an optional 'recommended' workflow to improve for users. Editing and creation are downstream of recognizing what's already running, so the home screen optimizes for status and ownership at a glance.",
+        figure: {
+          src: AgenticWorkflowDetails.src,
+          alt: "Workflow details surface",
+          focusPosition: "left top",
+        },
+      },
+      {
+        title: "Built dedicated action surfaces",
+        body: "Each action type, like sending a message, tag case, or send to a manufacturer integration, got its own focused configuration surface so the workflow row stays clean while the action stays expressive.",
+        figure: {
+          src: AgenticSendMessage.src,
+          alt: "Send message action configuration",
+          focusPosition: "center top",
+        },
+      },
+      {
+        title: "Layered the assistant in carefully",
+        body: "An assistant panel sits alongside the builder for staff who want to describe a workflow in plain language. It scaffolds the rule, then hands editing back to the visual builder.",
+        figure: {
+          src: AgenticChatComplete.src,
+          alt: "Assistant panel alongside the builder",
+          focusPosition: "right top",
+        },
+      },
+    ],
+    showcase: {
+      title: "Inside the Builder",
+      layout: "marquee-grid",
+      hero: {
+        src: AgenticWorkflowsHome.src,
+        alt: "Workflows home view",
+        caption: "Workflows home — scan, don't dig.",
+        focusPosition: "left top",
+      },
+      figures: [
+        {
+          src: AgenticWorkflowDetails.src,
+          alt: "Workflow details",
+          caption: "Workflow details",
+          focusPosition: "left top",
+        },
+        {
+          src: AgenticChatComplete.src,
+          alt: "Assistant complete state",
+          caption: "Assistant",
+          focusPosition: "left top",
+        },
+        {
+          src: AgenticSendMessage.src,
+          alt: "Send message action",
+          caption: "Send message action",
+          focusPosition: "left top",
+        },
+        {
+          src: AgenticTagCase.src,
+          alt: "Tag case action",
+          caption: "Tag case action",
+          focusPosition: "left top",
+        },
+        {
+          src: AgenticSendStryker.src,
+          alt: "Manufacturer integration action",
+          caption: "Manufacturer integration",
+          focusPosition: "left top",
+        },
+        {
+          src: AgenticFetchTray.src,
+          alt: "Fetch tray action",
+          caption: "Fetch tray",
+          focusPosition: "left top",
+        },
+      ],
+    },
+    outcomes:
+      "Proposed to the non-engineering staff a way to compose real automation themselves and gave engineering a single flow instead of a backlog of one-off scripts.",
     sections: [],
   },
   {
