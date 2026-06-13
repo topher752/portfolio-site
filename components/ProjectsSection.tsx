@@ -1,10 +1,14 @@
 "use client";
 
 import styled from "styled-components";
-import ProjectCard from "./ProjectCard";
+import ProjectCard, { ProjectCardProps } from "./ProjectCard";
+import { getProject } from "@/lib/projects";
 import { useScrollReveal } from "@/lib/useScrollReveal";
 import NextRepLogo from "@/assets/NextRepLogo.svg";
 import HoneysucklesLogo from "@/assets/HoneySucklesLogo.svg";
+import DocSperaWebThumb from "@/assets/RedesignScreenshots/PracticeDashboard.png";
+import DocSperaMobileThumb from "@/assets/MobileApp/Overview.png";
+import DocSperaWorkflowsThumb from "@/assets/AgenticAI/WorkflowsHome.png";
 
 const Section = styled.section`
   padding: 0 24px 96px;
@@ -90,6 +94,96 @@ function RevealHeader({ children }: { children: React.ReactNode }) {
   );
 }
 
+type CardMeta = Omit<ProjectCardProps, "description" | "isNda"> & {
+  slug: string;
+};
+
+const professionalCards: CardMeta[] = [
+  {
+    slug: "docspera",
+    title: "DocSpera Web Redesign",
+    subtitle: "Surgical Coordination Portal",
+    accentColor: "#0096fa",
+    thumbnailSrc: DocSperaWebThumb.src,
+    thumbnailMode: "cover",
+    linkText: "View Project",
+    linkHref: "/projects/docspera",
+  },
+  {
+    slug: "docspera-mobile",
+    title: "DocSpera Mobile App",
+    subtitle: "Native Mobile Companion",
+    accentColor: "#0096fa",
+    thumbnailSrc: DocSperaMobileThumb.src,
+    thumbnailMode: "cover",
+    thumbnailPosition: "center top",
+    linkText: "View Project",
+    linkHref: "/projects/docspera-mobile",
+  },
+  {
+    slug: "docspera-workflows",
+    title: "DocSpera Workflow Automation",
+    subtitle: "Agentic Workflow Builder",
+    accentColor: "#0096fa",
+    thumbnailSrc: DocSperaWorkflowsThumb.src,
+    thumbnailMode: "cover",
+    linkText: "View Project",
+    linkHref: "/projects/docspera-workflows",
+  },
+  {
+    slug: "digital-surgery",
+    title: "Digital Surgery Platform",
+    subtitle: "Responsive Web Application",
+    accentColor: "#d71500",
+    linkText: "View Project",
+    linkHref: "/projects/digital-surgery",
+  },
+  {
+    slug: "medical-therapy",
+    title: "Medical Therapy Dashboard",
+    subtitle: "UI/UX Design & Frontend Development",
+    accentColor: "#ff9e1b",
+    linkText: "View Project",
+    linkHref: "/projects/medical-therapy",
+  },
+];
+
+const clientCards: CardMeta[] = [
+  {
+    slug: "nextrep",
+    title: "NextRep Homepage & Marketing",
+    subtitle: "Client Website",
+    accentColor: "#f0ebe1",
+    thumbnailSrc: NextRepLogo.src,
+    linkText: "View Case Study",
+    linkHref: "/projects/nextrep",
+  },
+  {
+    slug: "honeysuckles",
+    title: "Honeysuckles Homepage",
+    subtitle: "Client Website",
+    accentColor: "#f0ebe1",
+    thumbnailSrc: HoneysucklesLogo.src,
+    linkText: "View Case Study",
+    linkHref: "/projects/honeysuckles",
+  },
+];
+
+function renderCards(cards: CardMeta[]) {
+  return cards.map((card, i) => {
+    const project = getProject(card.slug);
+    return (
+      <RevealCard key={card.slug} delay={i * 0.1}>
+        <ProjectCard
+          {...card}
+          description={project?.description ?? ""}
+          isNda={project?.nda}
+        />
+      </RevealCard>
+    );
+  });
+}
+
 export default function ProjectsSection() {
   return (
     <Section id="work">
@@ -100,44 +194,7 @@ export default function ProjectsSection() {
             <SectionTitle>Professional Projects</SectionTitle>
           </SectionHeader>
         </RevealHeader>
-        <Grid>
-          <RevealCard delay={0}>
-            <ProjectCard
-              title="DocSpera Redesign"
-              subtitle="Web Application & Mobile App Redesign"
-              description="UX Design and frontend development for DocSpera's healthcare portal designed to streamline patient scheduling, messaging, and surgical lifecycle tracking on both web and mobile applications."
-              accentColor="#0096fa"
-              isNda
-              linkText="View Project"
-              linkHref="/projects/docspera"
-              slug="docspera"
-            />
-          </RevealCard>
-          <RevealCard delay={0.1}>
-            <ProjectCard
-              title="Digital Surgery Platform"
-              subtitle="Responsive Web Application"
-              description="UI/UX design and frontend development for a leading medical device company. Focused on creating an intuitive experience for surgeons navigating a connected orthopedic technology ecosystem."
-              accentColor="#d71500"
-              isNda
-              linkText="View Project"
-              linkHref="/projects/digital-surgery"
-              slug="digital-surgery"
-            />
-          </RevealCard>
-          <RevealCard delay={0.2}>
-            <ProjectCard
-              title="Medical Therapy Dashboard"
-              subtitle="UI/UX Design & Frontend Development"
-              description="UI/UX design and frontend development designing and assisting building therapy tracking, patient intake flows, and an admin view in one concise dashboard"
-              accentColor="#ff9e1b"
-              isNda
-              linkText="View Project"
-              linkHref="/projects/medical-therapy"
-              slug="medical-therapy"
-            />
-          </RevealCard>
-        </Grid>
+        <Grid>{renderCards(professionalCards)}</Grid>
       </Group>
 
       {/* Client Projects */}
@@ -147,32 +204,7 @@ export default function ProjectsSection() {
             <SectionTitle>Client Projects</SectionTitle>
           </SectionHeader>
         </RevealHeader>
-        <Grid>
-          <RevealCard delay={0}>
-            <ProjectCard
-              title="NextRep Homepage & Marketing"
-              subtitle="Client Website"
-              description="Web design for a personal fitness coaching. Focused on showcasing trainers, amplifying social proof through testimonials, and making contact frictionless."
-              accentColor="#f0ebe1"
-              linkText="View Case Study"
-              linkHref="/projects/nextrep"
-              slug="nextrep"
-              thumbnailSrc={NextRepLogo.src}
-            />
-          </RevealCard>
-          <RevealCard delay={0.1}>
-            <ProjectCard
-              title="Honeysuckles Homepage"
-              subtitle="Client Website"
-              description="Web design for a custom floral studio serving weddings, events, and everything in between. Built to feel as curated and personal as the arrangements they create."
-              accentColor="#f0ebe1"
-              linkText="View Case Study"
-              linkHref="/projects/honeysuckles"
-              slug="honeysuckles"
-              thumbnailSrc={HoneysucklesLogo.src}
-            />
-          </RevealCard>
-        </Grid>
+        <Grid>{renderCards(clientCards)}</Grid>
       </Group>
     </Section>
   );

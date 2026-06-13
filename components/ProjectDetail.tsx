@@ -3,10 +3,9 @@
 import styled from "styled-components";
 import Link from "next/link";
 import { useScrollReveal } from "@/lib/useScrollReveal";
-import type { ProjectData } from "@/lib/projects";
+import type { ProjectData, ProjectShowcase } from "@/lib/projects";
 import projects from "@/lib/projects";
-
-// ─── Layout ────────────────────────────────────────────────────────────────
+import { ZoomImg, useLightbox, type ZoomFn } from "./Lightbox";
 
 const Page = styled.div`
   background: ${({ theme }) => theme.colors.bg};
@@ -18,8 +17,6 @@ const ContentWrap = styled.div`
   margin: 0 auto;
   padding: 0 24px;
 `;
-
-// ─── Back link ─────────────────────────────────────────────────────────────
 
 const BackRow = styled.div`
   padding-top: calc(80px + 48px);
@@ -44,8 +41,6 @@ const BackLink = styled(Link)`
     flex-shrink: 0;
   }
 `;
-
-// ─── Header ─────────────────────────────────────────────────────────────────
 
 const Header = styled.header`
   padding-top: 36px;
@@ -142,26 +137,43 @@ const MetaValue = styled.span`
   max-width: 420px;
 `;
 
-// ─── Hero image ─────────────────────────────────────────────────────────────
-
-const HeroImageWrap = styled.div`
+const HeroImageWrap = styled.div<{ $compact?: boolean }>`
   margin-top: 48px;
   border-radius: 24px;
   overflow: hidden;
-  background: ${({ theme }) => theme.colors.border};
+  background: ${({ theme, $compact }) =>
+    $compact ? theme.colors.bgMuted : theme.colors.border};
+  border: ${({ theme, $compact }) =>
+    $compact ? `1px solid ${theme.colors.border}` : "none"};
+  padding: ${({ $compact }) => ($compact ? "48px 24px" : "0")};
+  display: ${({ $compact }) => ($compact ? "flex" : "block")};
+  justify-content: center;
+  gap: ${({ $compact }) => ($compact ? "32px" : "0")};
+  flex-wrap: wrap;
   box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.1),
     0 1px 2px -1px rgba(0, 0, 0, 0.1);
 
   img {
     display: block;
-    width: 100%;
+    width: ${({ $compact }) => ($compact ? "auto" : "100%")};
+    max-width: ${({ $compact }) => ($compact ? "280px" : "none")};
+    max-height: ${({ $compact }) => ($compact ? "520px" : "none")};
     height: auto;
     object-fit: cover;
+    border-radius: ${({ $compact }) => ($compact ? "24px" : "0")};
+    border: ${({ $compact }) => ($compact ? "2px solid #000" : "none")};
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: ${({ $compact }) => ($compact ? "28px 12px" : "0")};
+    gap: ${({ $compact }) => ($compact ? "16px" : "0")};
+
+    img {
+      max-width: ${({ $compact }) => ($compact ? "44%" : "none")};
+    }
   }
 `;
-
-// ─── Article body ───────────────────────────────────────────────────────────
 
 const ArticleBody = styled.div`
   padding-top: 64px;
@@ -170,8 +182,6 @@ const ArticleBody = styled.div`
   flex-direction: column;
   gap: 56px;
 `;
-
-// ─── Problem Statement + sidebar ─────────────────────────────────────────────
 
 const AskRow = styled.div`
   display: flex;
@@ -274,8 +284,6 @@ const OverviewVal = styled.span`
   text-align: right;
 `;
 
-// ─── Tasks / Results shared list ─────────────────────────────────────────────
-
 const ItemList = styled.ul`
   list-style: none;
   display: flex;
@@ -311,8 +319,6 @@ const ItemRow = styled.li<{ $variant?: "task" | "result" }>`
     margin-top: 9px;
   }
 `;
-
-// ─── Stats strip ─────────────────────────────────────────────────────────────
 
 const StatsGrid = styled.div`
   display: grid;
@@ -367,7 +373,307 @@ const MetricsPlaceholder = styled.p`
   text-align: center;
 `;
 
-// ─── Process sections ────────────────────────────────────────────────────────
+const ProcessList = styled.ol`
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  counter-reset: step;
+`;
+
+const ProcessItem = styled.li`
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  padding: 36px 0;
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+
+  &:last-child {
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  }
+
+  /* Flip every other row: figure on the left */
+  &:nth-child(even) > :first-child {
+    order: 2;
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 28px 0;
+
+    /* On mobile, no flipping needed since figure is hidden */
+    &:nth-child(even) > :first-child {
+      order: 0;
+    }
+  }
+`;
+
+const ProcessItemNoFigure = styled.li`
+  counter-increment: step;
+  padding: 28px 0;
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+
+  &:last-child {
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  }
+`;
+
+const ProcessStepNumber = styled.div`
+  font-size: 13px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.textFaint};
+  letter-spacing: 0.4px;
+  margin-bottom: 10px;
+
+  &::before {
+    content: counter(step, decimal-leading-zero);
+  }
+`;
+
+const ProcessStepTitle = styled.h3`
+  font-size: 20px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.textDark};
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+  margin-bottom: 10px;
+`;
+
+const ProcessStepBody = styled.p`
+  font-size: 16px;
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.textMid};
+  line-height: 1.625;
+  letter-spacing: -0.3px;
+`;
+
+const ProcessStepFigure = styled.div<{ $focus?: string }>`
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.bgMuted};
+  aspect-ratio: 4 / 3;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 1px 2px -1px rgba(0, 0, 0, 0.08);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: ${({ $focus }) => $focus ?? "left top"};
+    transform: scale(1.6);
+    transform-origin: ${({ $focus }) => $focus ?? "left top"};
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    display: none;
+  }
+`;
+
+const Showcase = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+const ShowcaseHero = styled.div`
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.bgMuted};
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.08);
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+`;
+
+const ShowcaseCaption = styled.p`
+  font-size: 13px;
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.textFaint};
+  letter-spacing: -0.1px;
+  padding: 10px 4px 0;
+`;
+
+const ShowcaseGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const ShowcaseTile = styled.figure`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+`;
+
+const ShowcaseTileImg = styled.div<{ $focus?: string }>`
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.bgMuted};
+  aspect-ratio: 16 / 10;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 1px 2px -1px rgba(0, 0, 0, 0.08);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: ${({ $focus }) => $focus ?? "top center"};
+  }
+`;
+
+const MobileRail = styled.div`
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 16px 4px 24px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.border};
+    border-radius: 9999px;
+  }
+`;
+
+const MobileTile = styled.figure`
+  flex: 0 0 auto;
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  scroll-snap-align: start;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    width: 200px;
+  }
+`;
+
+const MobileTileImg = styled.div`
+  border-radius: 28px;
+  overflow: hidden;
+  background: ${({ theme }) => theme.colors.bgMuted};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  padding: 12px;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 18px;
+    border: 2px solid #000;
+  }
+`;
+
+const MobileTileCaption = styled.figcaption`
+  font-size: 13px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.textMid};
+  letter-spacing: -0.1px;
+  text-align: center;
+`;
+
+const DecisionList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+`;
+
+const DecisionCard = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: center;
+
+  /* Flip every other row: figure on the left */
+  &:nth-child(even) > :first-child {
+    order: 2;
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+
+    &:nth-child(even) > :first-child {
+      order: 0;
+    }
+  }
+`;
+
+const DecisionText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const DecisionTitle = styled.h3`
+  font-size: 20px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.textDark};
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+`;
+
+const DecisionBody = styled.p`
+  font-size: 16px;
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.textMid};
+  line-height: 1.625;
+  letter-spacing: -0.3px;
+`;
+
+const DecisionFigure = styled.div`
+  border-radius: 16px;
+  overflow: hidden;
+  background: ${({ theme }) => theme.colors.bgMuted};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+`;
+
+const OutcomesText = styled.p`
+  font-size: 18px;
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.textMid};
+  line-height: 1.625;
+  letter-spacing: -0.44px;
+`;
 
 const ProcessSection = styled.div`
   display: flex;
@@ -418,8 +724,6 @@ const FigureGrid = styled.div`
     grid-template-columns: 1fr;
   }
 `;
-
-// ─── Project nav strip ───────────────────────────────────────────────────────
 
 const ProjectNavWrap = styled.div`
   border-top: 1px solid ${({ theme }) => theme.colors.border};
@@ -478,8 +782,6 @@ const NdaDot = styled.span`
   opacity: 0.5;
 `;
 
-// ─── Reveal wrapper ──────────────────────────────────────────────────────────
-
 const Reveal = styled.div`
   &.reveal {
     opacity: 0;
@@ -493,6 +795,7 @@ const Reveal = styled.div`
     transform: translateY(0);
   }
 `;
+
 
 function RevealBlock({
   children,
@@ -513,11 +816,71 @@ function RevealBlock({
   );
 }
 
-// ─── Component ───────────────────────────────────────────────────────────────
+function ShowcaseBlock({
+  showcase,
+  onZoom,
+}: {
+  showcase: ProjectShowcase;
+  onZoom: ZoomFn;
+}) {
+  if (showcase.layout === "mobile-rail") {
+    return (
+      <Showcase>
+        <MobileRail>
+          {showcase.figures.map((fig, i) => (
+            <MobileTile key={i}>
+              <MobileTileImg>
+                <ZoomImg src={fig.src} alt={fig.alt ?? ""} onZoom={onZoom} />
+              </MobileTileImg>
+              {fig.caption && (
+                <MobileTileCaption>{fig.caption}</MobileTileCaption>
+              )}
+            </MobileTile>
+          ))}
+        </MobileRail>
+      </Showcase>
+    );
+  }
+  return (
+    <Showcase>
+      {showcase.hero && (
+        <div>
+          <ShowcaseHero>
+            <ZoomImg
+              src={showcase.hero.src}
+              alt={showcase.hero.alt ?? ""}
+              onZoom={onZoom}
+            />
+          </ShowcaseHero>
+          {showcase.hero.caption && (
+            <ShowcaseCaption>{showcase.hero.caption}</ShowcaseCaption>
+          )}
+        </div>
+      )}
+      <ShowcaseGrid>
+        {showcase.figures.map((fig, i) => (
+          <ShowcaseTile key={i}>
+            <ShowcaseTileImg $focus={fig.focusPosition}>
+              <ZoomImg src={fig.src} alt={fig.alt ?? ""} onZoom={onZoom} />
+            </ShowcaseTileImg>
+            {fig.caption && <ShowcaseCaption>{fig.caption}</ShowcaseCaption>}
+          </ShowcaseTile>
+        ))}
+      </ShowcaseGrid>
+    </Showcase>
+  );
+}
 
 export default function ProjectDetail({ project }: { project: ProjectData }) {
   const useGrid = (section: (typeof project.sections)[0]) =>
     section.figures.length > 1 && !section.stack;
+
+  const hasProcess = project.process && project.process.length > 0;
+  const hasShowcase = project.showcase && project.showcase.figures.length > 0;
+  const hasDecisions = project.decisions && project.decisions.length > 0;
+  const hasOutcomes = !!project.outcomes;
+
+  const { open: openLightbox, element: lightboxElement } = useLightbox();
 
   return (
     <Page>
@@ -581,8 +944,19 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
 
         {/* Hero image */}
         {project.heroImage && (
-          <HeroImageWrap>
-            <img src={project.heroImage} alt={`${project.title} hero`} />
+          <HeroImageWrap $compact={project.heroImageCompact}>
+            <ZoomImg
+              src={project.heroImage}
+              alt={`${project.title} hero`}
+              onZoom={openLightbox}
+            />
+            {project.heroImageExtra && (
+              <ZoomImg
+                src={project.heroImageExtra}
+                alt={`${project.title} hero secondary`}
+                onZoom={openLightbox}
+              />
+            )}
           </HeroImageWrap>
         )}
 
@@ -621,8 +995,77 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
             </AskRow>
           </RevealBlock>
 
-          {/* Tasks */}
-          {project.tasks && project.tasks.length > 0 && (
+          {/* Process (new narrative) */}
+          {hasProcess && (
+            <RevealBlock>
+              <SectionHeading>Process</SectionHeading>
+              <ProcessList>
+                {project.process!.map((step, i) => {
+                  const Row = step.figure ? ProcessItem : ProcessItemNoFigure;
+                  return (
+                    <Row key={i}>
+                      <div>
+                        <ProcessStepNumber />
+                        <ProcessStepTitle>{step.title}</ProcessStepTitle>
+                        <ProcessStepBody>{step.body}</ProcessStepBody>
+                      </div>
+                      {step.figure && (
+                        <ProcessStepFigure $focus={step.figure.focusPosition}>
+                          <ZoomImg
+                            src={step.figure.src}
+                            alt={step.figure.alt ?? ""}
+                            onZoom={openLightbox}
+                          />
+                        </ProcessStepFigure>
+                      )}
+                    </Row>
+                  );
+                })}
+              </ProcessList>
+            </RevealBlock>
+          )}
+
+          {/* Showcase */}
+          {hasShowcase && (
+            <RevealBlock>
+              <SectionHeading>
+                {project.showcase!.title ?? "Showcase"}
+              </SectionHeading>
+              <ShowcaseBlock
+                showcase={project.showcase!}
+                onZoom={openLightbox}
+              />
+            </RevealBlock>
+          )}
+
+          {/* Design Decisions */}
+          {hasDecisions && (
+            <RevealBlock>
+              <SectionHeading>Design Decisions</SectionHeading>
+              <DecisionList>
+                {project.decisions!.map((d, i) => (
+                  <DecisionCard key={i}>
+                    <DecisionText>
+                      <DecisionTitle>{d.title}</DecisionTitle>
+                      <DecisionBody>{d.body}</DecisionBody>
+                    </DecisionText>
+                    {d.figure && (
+                      <DecisionFigure>
+                        <ZoomImg
+                          src={d.figure.src}
+                          alt={d.figure.alt ?? ""}
+                          onZoom={openLightbox}
+                        />
+                      </DecisionFigure>
+                    )}
+                  </DecisionCard>
+                ))}
+              </DecisionList>
+            </RevealBlock>
+          )}
+
+          {/* Tasks (legacy) */}
+          {!hasProcess && project.tasks && project.tasks.length > 0 && (
             <RevealBlock>
               <SectionHeading>Tasks</SectionHeading>
               <ItemList>
@@ -635,8 +1078,13 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
             </RevealBlock>
           )}
 
-          {/* Results */}
-          {project.results && project.results.length > 0 && (
+          {/* Outcomes (prose) OR Results (legacy bullets) */}
+          {hasOutcomes ? (
+            <RevealBlock>
+              <SectionHeading>Outcomes</SectionHeading>
+              <OutcomesText>{project.outcomes}</OutcomesText>
+            </RevealBlock>
+          ) : project.results && project.results.length > 0 ? (
             <RevealBlock>
               <SectionHeading>Results</SectionHeading>
               <ItemList>
@@ -647,7 +1095,7 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
                 ))}
               </ItemList>
             </RevealBlock>
-          )}
+          ) : null}
 
           {/* Metrics */}
           {project.stats !== undefined && (
@@ -671,7 +1119,7 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
             </RevealBlock>
           )}
 
-          {/* Named sections */}
+          {/* Named sections (legacy — for nextrep / honeysuckles) */}
           {project.sections.map((section, i) => (
             <RevealBlock key={i} delay={0.05}>
               <ProcessSection>
@@ -692,14 +1140,22 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
                   <FigureGrid>
                     {section.figures.map((fig, j) => (
                       <Figure key={j}>
-                        <img src={fig.src} alt={fig.alt ?? ""} />
+                        <ZoomImg
+                          src={fig.src}
+                          alt={fig.alt ?? ""}
+                          onZoom={openLightbox}
+                        />
                       </Figure>
                     ))}
                   </FigureGrid>
                 ) : (
                   section.figures.map((fig, j) => (
                     <Figure key={j}>
-                      <img src={fig.src} alt={fig.alt ?? ""} />
+                      <ZoomImg
+                        src={fig.src}
+                        alt={fig.alt ?? ""}
+                        onZoom={openLightbox}
+                      />
                     </Figure>
                   ))
                 )}
@@ -750,6 +1206,8 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
           </ProjectNavWrap>
         </ArticleBody>
       </ContentWrap>
+
+      {lightboxElement}
     </Page>
   );
 }

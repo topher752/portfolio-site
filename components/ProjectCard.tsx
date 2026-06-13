@@ -12,6 +12,8 @@ export interface ProjectCardProps {
   accentColor: string;
   thumbnailBg?: string;
   thumbnailSrc?: string;
+  thumbnailMode?: "logo" | "cover";
+  thumbnailPosition?: string;
   linkText?: string;
   linkHref?: string;
   isNda?: boolean;
@@ -44,7 +46,7 @@ const Thumbnail = styled.div<{ $accentColor: string; $bg?: string }>`
   }
 `;
 
-const ThumbnailImg = styled.img`
+const ThumbnailImg = styled.img<{ $objectPosition?: string }>`
   position: absolute;
   inset: 0;
   object-fit: cover;
@@ -58,6 +60,13 @@ const ThumbnailImg = styled.img`
   &.logo {
     width: 85%;
     margin: auto;
+  }
+
+  &.cover {
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    object-position: ${({ $objectPosition }) => $objectPosition ?? "top center"};
   }
 `;
 
@@ -158,18 +167,26 @@ export default function ProjectCard({
   description,
   accentColor,
   thumbnailSrc,
+  thumbnailMode,
+  thumbnailPosition,
   linkText,
   linkHref,
   isNda,
   slug,
 }: ProjectCardProps) {
+  const imgClass = isNda
+    ? "nda"
+    : thumbnailMode === "cover"
+      ? "cover"
+      : "logo";
   const thumbnailContent = (
     <>
       {thumbnailSrc && (
         <ThumbnailImg
           src={thumbnailSrc}
           alt=""
-          className={isNda ? "nda" : "logo"}
+          className={imgClass}
+          $objectPosition={thumbnailPosition}
         />
       )}
       {isNda && (
