@@ -29,13 +29,14 @@ const SectionTitle = styled.h2`
   letter-spacing: 0.40px;
 `;
 
-const PillsGrid = styled.div`
+const PillsGrid = styled.ul`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  list-style: none;
 `;
 
-const Pill = styled.span`
+const Pill = styled.li`
   display: inline-flex;
   align-items: center;
   padding: 10px 20px;
@@ -71,7 +72,7 @@ export default function SkillsSection() {
         </SectionHeader>
       </RevealWrapper>
       <RevealWrapper ref={pillsRef} className="reveal" style={{ transitionDelay: '0.1s' }}>
-        <PillsGrid>
+        <PillsGrid role="list" aria-label="Skills and tools">
           {skills.map((skill) => (
             <Pill key={skill}>{skill}</Pill>
           ))}

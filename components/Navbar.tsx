@@ -3,6 +3,7 @@
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import VisuallyHidden from './VisuallyHidden';
 
 const Nav = styled.nav<{ $scrolled: boolean }>`
   position: fixed;
@@ -42,19 +43,6 @@ const NavLinks = styled.div`
   gap: 32px;
 `;
 
-const NavLink = styled.a`
-  font-size: 14px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.colors.textMid};
-  letter-spacing: -0.15px;
-  cursor: pointer;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.textDark};
-  }
-`;
-
 const NavLinkAnchor = styled(Link)`
   font-size: 14px;
   font-weight: 500;
@@ -77,17 +65,15 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
-    <Nav $scrolled={scrolled}>
+    <Nav $scrolled={scrolled} aria-label="Main">
       <Inner>
         <Logo href="/">Christopher Tate.</Logo>
         <NavLinks>
-          <NavLink onClick={() => scrollToSection('work')}>Work</NavLink>
-          <NavLinkAnchor href="/Resume.pdf" target="_blank" rel="noopener noreferrer">Resume</NavLinkAnchor>
+          <NavLinkAnchor href="/#work">Work</NavLinkAnchor>
+          <NavLinkAnchor href="/Resume.pdf" target="_blank" rel="noopener noreferrer">
+            Resume <VisuallyHidden>(opens in a new tab)</VisuallyHidden>
+          </NavLinkAnchor>
         </NavLinks>
       </Inner>
     </Nav>
