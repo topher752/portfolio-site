@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Link from "next/link";
 import ArrowIcon from "@/assets/ArrowIcon.svg";
 import LockIcon from "@/assets/LockIcon.svg";
+import VisuallyHidden from "./VisuallyHidden";
 
 export interface ProjectCardProps {
   title: string;
@@ -212,12 +213,17 @@ export default function ProjectCard({
     </>
   );
 
+  const thumbnailIsRedundant = !!(linkHref && linkText);
+
   return (
     <Card>
       {linkHref ? (
         <Link
           href={linkHref}
           style={{ display: "block", borderRadius: 16, overflow: "hidden" }}
+          aria-hidden={thumbnailIsRedundant || undefined}
+          tabIndex={thumbnailIsRedundant ? -1 : undefined}
+          aria-label={thumbnailIsRedundant ? undefined : title}
         >
           <Thumbnail $accentColor={accentColor}>{thumbnailContent}</Thumbnail>
         </Link>
@@ -231,6 +237,7 @@ export default function ProjectCard({
         {linkHref && linkText ? (
           <CardLink href={linkHref}>
             {linkText}
+            <VisuallyHidden>: {title}</VisuallyHidden>
             <img src={ArrowIcon.src} alt="" />
           </CardLink>
         ) : isNda ? (

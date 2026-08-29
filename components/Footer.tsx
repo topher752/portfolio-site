@@ -105,17 +105,17 @@ export default function Footer() {
             href="https://www.linkedin.com/in/christophertate752/"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="LinkedIn"
+            aria-label="LinkedIn profile (opens in a new tab)"
           >
-            <img src={LinkedInIcon.src} alt="LinkedIn" />
+            <img src={LinkedInIcon.src} alt="" />
           </IconBtn>
           <IconBtn
             href="https://github.com/topher752"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="GitHub"
+            aria-label="GitHub profile (opens in a new tab)"
           >
-            <img src={GithubIcon.src} alt="Github" />
+            <img src={GithubIcon.src} alt="" />
           </IconBtn>
         </Buttons>
         <Copyright>© 2026 Christopher Tate. All rights reserved.</Copyright>

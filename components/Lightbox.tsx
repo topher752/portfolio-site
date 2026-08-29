@@ -9,17 +9,42 @@ type ZoomImgProps = React.ImgHTMLAttributes<HTMLImageElement> & {
   onZoom?: ZoomFn;
 };
 
+const StyledImg = styled.img`
+  &[role="button"]:focus-visible {
+    outline: 3px solid ${({ theme }) => theme.colors.focusRing};
+    outline-offset: -3px;
+  }
+`;
+
 export function ZoomImg({ onZoom, style, src, alt, ...rest }: ZoomImgProps) {
-  const handleClick = () => {
-    if (onZoom && typeof src === "string") onZoom(src, alt);
+  const zoomable = !!onZoom && typeof src === "string";
+
+  const handleZoom = () => {
+    if (zoomable) onZoom!(src as string, alt);
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLImageElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleZoom();
+    }
+  };
+
+  if (!zoomable) {
+    return <StyledImg {...rest} src={src} alt={alt} style={style} />;
+  }
+
   return (
-    <img
+    <StyledImg
       {...rest}
       src={src}
       alt={alt}
-      onClick={onZoom ? handleClick : rest.onClick}
-      style={{ cursor: onZoom ? "zoom-in" : undefined, ...style }}
+      role="button"
+      tabIndex={0}
+      aria-label={alt ? `Enlarge image: ${alt}` : "Enlarge image"}
+      onClick={handleZoom}
+      onKeyDown={handleKeyDown}
+      style={{ cursor: "zoom-in", ...style }}
     />
   );
 }
@@ -136,6 +161,11 @@ const LightboxClose = styled.button`
   &:hover {
     background: rgba(255, 255, 255, 0.22);
   }
+
+  &:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
+  }
 `;
 
 export function useLightbox() {
@@ -156,7 +186,11 @@ export function useLightbox() {
   }, []);
 
   const element = (
-    <LightboxDialog ref={ref} onClose={handleClose}>
+    <LightboxDialog
+      ref={ref}
+      onClose={handleClose}
+      aria-label={image?.alt ? `Enlarged image: ${image.alt}` : "Enlarged image"}
+    >
       {image && (
         <LightboxInner onClick={close}>
           <img
@@ -169,7 +203,7 @@ export function useLightbox() {
             onClick={close}
             aria-label="Close image"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path
                 d="M4 4l8 8M12 4l-8 8"
                 stroke="currentColor"

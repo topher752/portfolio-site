@@ -24,7 +24,42 @@ a {
   text-decoration: none;
 }
 
-/* Scroll reveal base state */
+[id] {
+  scroll-margin-top: 104px;
+}
+
+:focus-visible {
+  outline: 2px solid #2d2d2d;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.focus-ring-light:focus-visible {
+  outline-color: #fdfbf7;
+}
+
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 200;
+  padding: 12px 20px;
+  border-radius: 8px;
+  background: #2d2d2d;
+  color: #fdfbf7;
+  font-size: 14px;
+  font-weight: 500;
+  /* Visually hidden until focused */
+  transform: translateY(-200%);
+  transition: transform 0.15s ease;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid #fdfbf7;
+  outline-offset: -6px;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(28px);
@@ -40,3 +75,23 @@ a {
 .reveal-delay-2 { transition-delay: 0.16s; }
 .reveal-delay-3 { transition-delay: 0.24s; }
 .reveal-delay-4 { transition-delay: 0.32s; }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal,
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -170,7 +170,9 @@ export default function ExperienceSection() {
                   <MetaText>{exp.location}</MetaText>
                 </DateLocation>
               </Meta>
-              <Bullets>
+              {/* `list-style: none` drops list semantics in Safari/VoiceOver;
+                  role="list" puts them back. */}
+              <Bullets role="list">
                 {exp.bullets.map((b, i) => (
                   <Bullet key={i}>{b}</Bullet>
                 ))}

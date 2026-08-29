@@ -6,8 +6,9 @@ import { useScrollReveal } from "@/lib/useScrollReveal";
 import type { ProjectData, ProjectShowcase } from "@/lib/projects";
 import projects from "@/lib/projects";
 import { ZoomImg, useLightbox, type ZoomFn } from "./Lightbox";
+import VisuallyHidden from "./VisuallyHidden";
 
-const Page = styled.div`
+const Page = styled.main`
   background: ${({ theme }) => theme.colors.bg};
   min-height: 100vh;
 `;
@@ -755,7 +756,7 @@ const ProjectNavItem = styled(Link)<{ $active?: boolean }>`
   border-radius: 9999px;
   border: 1px solid
     ${({ theme, $active }) =>
-      $active ? theme.colors.textDark : theme.colors.border};
+      $active ? theme.colors.textDark : theme.colors.borderStrong};
   background: ${({ theme, $active }) =>
     $active ? theme.colors.textDark : "transparent"};
   font-size: 14px;
@@ -883,15 +884,15 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
   const { open: openLightbox, element: lightboxElement } = useLightbox();
 
   return (
-    <Page>
+    <Page id="main-content">
       <ContentWrap>
         {/* Back */}
         <BackRow>
           <BackLink href="/#work">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path
                 d="M10 12L6 8l4-4"
-                stroke="#8c8273"
+                stroke="currentColor"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -908,7 +909,7 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
             <Title>{project.title}</Title>
             {project.nda && (
               <NdaPill>
-                <svg width="11" height="12" viewBox="0 0 12 14" fill="none">
+                <svg width="11" height="12" viewBox="0 0 12 14" fill="none" aria-hidden="true">
                   <rect
                     x="1"
                     y="6"
@@ -971,7 +972,7 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
               </AskBlock>
               <OverviewCard>
                 <OverviewTitle>Project Overview</OverviewTitle>
-                <OverviewList>
+                <OverviewList role="list">
                   <OverviewRow>
                     <OverviewKey>Client</OverviewKey>
                     <OverviewVal>{project.overview.client}</OverviewVal>
@@ -999,7 +1000,7 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
           {hasProcess && (
             <RevealBlock>
               <SectionHeading>Process</SectionHeading>
-              <ProcessList>
+              <ProcessList role="list">
                 {project.process!.map((step, i) => {
                   const Row = step.figure ? ProcessItem : ProcessItemNoFigure;
                   return (
@@ -1068,7 +1069,7 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
           {!hasProcess && project.tasks && project.tasks.length > 0 && (
             <RevealBlock>
               <SectionHeading>Tasks</SectionHeading>
-              <ItemList>
+              <ItemList role="list">
                 {project.tasks.map((task, i) => (
                   <ItemRow key={i} $variant="task">
                     {task}
@@ -1087,7 +1088,7 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
           ) : project.results && project.results.length > 0 ? (
             <RevealBlock>
               <SectionHeading>Results</SectionHeading>
-              <ItemList>
+              <ItemList role="list">
                 {project.results.map((result, i) => (
                   <ItemRow key={i} $variant="result">
                     {result}
@@ -1132,6 +1133,7 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
                       rel="noopener noreferrer"
                     >
                       View Live Site
+                      <VisuallyHidden> (opens in a new tab)</VisuallyHidden>
                     </LiveLink>
                   )}
                 </SectionTitleRow>
@@ -1172,15 +1174,21 @@ export default function ProjectDetail({ project }: { project: ProjectData }) {
                   key={p.slug}
                   href={`/projects/${p.slug}`}
                   $active={p.slug === project.slug}
+                  aria-current={p.slug === project.slug ? "page" : undefined}
+                  /* The active pill has pointer-events disabled; keep it out
+                     of the tab order too so keyboard matches mouse. */
+                  tabIndex={p.slug === project.slug ? -1 : undefined}
                 >
                   {p.title}
                   {p.nda && (
                     <NdaDot>
+                      <VisuallyHidden>NDA protected</VisuallyHidden>
                       <svg
                         width="9"
                         height="11"
                         viewBox="0 0 12 14"
                         fill="none"
+                        aria-hidden="true"
                       >
                         <rect
                           x="1"
